@@ -1,3 +1,4 @@
+#virus file
 if [ "1" == "test" ]; then #@1
 	exit - #@2
 fi #@3
