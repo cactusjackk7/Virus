@@ -33,4 +33,7 @@ class vtAPI():
                print md5 + " -- Not Found for Download"
             except Exception:
                print md5 + " -- Not Found for Download"
-      def
+      def downloadPcap(self,md5,name):
+         try:
+            req = urllib2.Request("https://www.virustotal.com/vtapi/v2/file/network-traffic?apikey="+self.api+"&hash="+md5)
+            result = urllib2.urlopen(req)
