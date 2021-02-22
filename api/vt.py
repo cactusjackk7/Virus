@@ -37,3 +37,15 @@ class vtAPI():
          try:
             req = urllib2.Request("https://www.virustotal.com/vtapi/v2/file/network-traffic?apikey="+self.api+"&hash="+md5)
             result = urllib2.urlopen(req)
+            pcapfile = result.read()
+            if len(pcapfile) > 0 and '{"response_code": "hash': not in pcapfile :
+               fo = open(name, "wb")
+               fo.write(pcapfile)
+               fo.close()
+               print "\n\tPCAP Downloaded to File -- " + name
+            else:
+               print md5 + " -- PCAP Not Available"
+            except Exception:
+               print md5 + " -- PCAP Not Available"
+      def rescan(self, md5):
+         
