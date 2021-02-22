@@ -56,3 +56,33 @@ class vtAPI():
 			
 			if jsondump == True:
 				jsondumpfile = open("VTDL" + md5 + ".json", "w")
+			
+			pprint(it, jsondumpfile)
+					jsondumpfile.close()
+					print "\n\tJSON Written to File -- " + "VTDL" + md5 + ".json"
+			
+				if verbose == True:
+					print '\n\tVerbose VirusTotal Information Output:\n'
+					for x in it['scans']:
+						print '\t', x,'\t' if len(x) < 7 else '','\t' if len(x) < 14 else '','\t',it['scans'][x]['detected'], '\t',it['scans'][x]['result']
+						
+			def main():
+				opt=argparse.ArgumentParser(description="Search and Download from VirusTotal")
+				opt.add_argument("HashorPath", help="Enter the MD5/SHA1/256 Hash or Path to File")
+				opt.add_argument("-s", "--search", action="store_true", help="Search VirusTotal")
+				opt.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Turn on verbosity of VT reports")
+				opt.add_argument("-j", "--jsondump", action="store_true",help="Dumps the full VT report to file (VTDLXXX.json)")
+				opt.add_argument("-r", "--rescan",action="store_true", help="Force Rescan with Current A/V Definitions")
+				if len(sys.argv)<=2:
+               opt.print_help()
+               sys.exit(1)
+            options= opt.parse_args()
+            vt=vtAPI()
+            md5 = checkMD5(option.HashorPath)
+            if options.search or options.jsondump or options.verbose:
+               parse(vt.getReport(md5), md5 ,options.verbose, options.jsondump)
+            if options.rescan:
+               vt.rescan(md5)
+
+        if __name__ == '__main__':
+         main()
