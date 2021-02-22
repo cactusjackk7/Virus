@@ -48,4 +48,8 @@ class vtAPI():
             except Exception:
                print md5 + " -- PCAP Not Available"
       def rescan(self, md5):
-         
+         param = {'resource':md5, 'apikey':self.api}
+         url = self.base + "file/rescan"
+         data = urllib.urlencode(param)
+         result = urllib2.urlopen(url,data)
+         print "\n\tVirus Total Rescan Initiated for -- " + md5 + " (Requery in 10 Mins)"
