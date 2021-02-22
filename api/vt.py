@@ -53,3 +53,28 @@ class vtAPI():
          data = urllib.urlencode(param)
          result = urllib2.urlopen(url,data)
          print "\n\tVirus Total Rescan Initiated for -- " + md5 + " (Requery in 10 Mins)"
+  
+  # md5 function
+
+  def checkMD5(checkval):
+     if re.match(r"([a-fA-F\d]{32})", checkval) == None:
+         md5 = md5sum(checkval)
+         return md5.upper()
+       else:
+            return checkval.upper()
+   
+   def checkMD5(filename):
+      fh = open()
+
+
+
+
+
+
+
+
+
+
+
+
+
