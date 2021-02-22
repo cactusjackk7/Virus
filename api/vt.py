@@ -65,6 +65,61 @@ class vtAPI():
    
    def checkMD5(filename):
       fh = open()
+      m = hashlib.md5()
+         while True:
+               data = fh.read(8192)
+               if not data:
+                     break
+               m.update(data)
+         return m.hexdigest() 
+      
+      def parse(it, md5, verbose, jsondump):
+         if it['response_code'] == 0:
+            print md5 + " -- Not Found in VT"
+            return 0
+         print "\n\tResults for MD5: ",it['md5'],"\n\n\tDetected by: ",it['positives'],'/',it['total'],'\n\tSophos Detection:',it['scans']['Sophos']['result'] ,'\n\tKaspersky Detection:',it['scans']['Kaspersky']['result'], '\n\tTrendMicro Detection:',it['scans']['TrendMicro']['result'],'\n\tScanned on:',it['scan_date'],'\n\tFirst Seen:',it['first_seen'],'\n\tLast Seen:',it['last_seen'],'\n\tUnique Sources',it['unique_sources'],'\n\tSubmission Names:'
+         for x in it['submission_names']:
+            print "\t\t",x
+         if jsondump == True:
+            jsondumpfile = open("VTDL" + md5 + ".json", "w")
+            pprint(it, jsondumpfile)
+            jsondumpfile.close()
+            print "\n\tJSON Written to File -- " + "VTDL" + md5 + ".json"
+            
+         if verbose == True:
+            print '\n\tVerbose VirusTotal Information Output:\n'
+            for x in it['scans']:
+               print '\t', x,'\t' if len(x) < 7 else '','\t' if len(x) < 14 else '','\t',it['scans'][x]['detected'], '\t',it['scans'][x]['result']
+               
+      def main():
+         opt=argparse.ArgumentParser(description="Search and Download from VirusTotal")
+         opt.add_argument("HashorPath", help="Enter the MD5 Hash or Path to File")
+         opt.add_argument("-s", "--search", action="store_true", help="Search VirusTotal")
+         opt.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Turn on verbosity of VT reports")
+         opt.add_argument("-j", "--jsondump", action="store_true",help="Dumps the full VT report to file (VTDLXXX.json)")
+         opt.add_argument("-d", "--download", action="store_true", help="Download File from Virustotal (VTDLXXX.danger)")
+         opt.add_argument("-p", "--pcap", action="store_true", help="Download Network Traffic (VTDLXXX.pcap)")
+         opt.add_argument("-r", "--rescan",action="store_true", help="Force Rescan with Current A/V Definitions")
+         if len(sys.argv)<=2:
+            opt.print_help()
+            sys.exit(1)
+         options= opt.parse_args()
+         vt=vtAPI()
+         md5 = checkMD5(options.HashorPath)
+         if options.search or options.jsondump or options.verbose:
+            parse(vt.getReport(md5), md5 ,options.verbose, options.jsondump)
+            if options.download:
+                  name = "VTDL" + md5 + ".danger"
+                  vt.downloadFile(md5,name)
+               if options.pcap:
+                  name = "VTDL" + md5 + ".pcap"
+                  vt.downloadPcap(md5,name)
+               if options.rescan:
+                  vt.rescan(md5)
+                  
+            if __name__ == '__main__':
+                  main()
+               
 
 
 
@@ -78,3 +133,4 @@ class vtAPI():
 
 
 
+            
